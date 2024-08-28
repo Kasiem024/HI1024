@@ -3,16 +3,25 @@
 int main()
 {
 
-    int int1, int2, int3, int4, largest, smallest;
+    int numbers[4] = {0, 0, 0, 0};
 
     printf("Enter 4 integers :");
-    scanf("%d %d %d %d", &int1, &int2, &int3, &int4);
+    scanf("%d,%d,%d,%d", &numbers[0], &numbers[1], &numbers[2], &numbers[3]);
 
-    int numbers[4] = {int1, int2, int3, int4};
+    int largest = numbers[0], smallest = numbers[0], counter = 0;
 
-    printf("%d", numbers);
+    for (int counter = 0; counter < 4; counter++)
+    {
+        if (largest < numbers[counter])
+        {
+            largest = numbers[counter];
+        }
+        if (smallest > numbers[counter])
+        {
+            smallest = numbers[counter];
+        }
+    }
 
-    printf("Largest: %d\nSmallest: %d", largest, smallest);
-
+    printf("\nLargest: %d\nSmallest: %d", largest, smallest);
     return 0;
 }
