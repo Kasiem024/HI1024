@@ -4,27 +4,26 @@ int main()
 {
     int a = 100, b = 1;
 
-    if (a > b)
+    while (a > b)
     {
-        print("%d, %d", a, b);
+        printf("\na=%d, b=%d", a, b);
 
-        if (a / b > 20)
+        if ((a / b) > 20)
         {
-            if (a = a / 2)
+            a = a / 2;
+        }
+        else
+        {
+            while (b < (a / 2))
             {
-                /* code */
+                b++;
+                printf("\nb=%d", b);
             }
-        }
-        while (b < (a / 2))
-        {
             b++;
-            printf("%d", b);
         }
     }
-    else
-    {
-        print("%d, %d", a, b);
-    }
+
+    printf("\na=%d, b=%d", a, b);
 
     return 0;
 }
