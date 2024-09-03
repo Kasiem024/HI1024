@@ -23,20 +23,14 @@ int main()
     {
         printf("\nHow many matches do you want to take? (1-3): ");
 
-        int correctChoice = 0, playerMatches = 0;
+        int playerMatches = 0;
 
-        while (correctChoice == 0)
+        scanf("%d", &playerMatches);
+
+        while (playerMatches < 1 || playerMatches > 3)
         {
+            printf("\nWrong amount of matches, try again ");
             scanf("%d", &playerMatches);
-
-            if (playerMatches <= 1 && playerMatches >= 3)
-            {
-                printf("\nWrong amount of matches, try again");
-            }
-            else
-            {
-                correctChoice = 1;
-            }
         }
 
         matches = matches - playerMatches;
@@ -49,10 +43,17 @@ int main()
         }
         else if (matches >= 4)
         {
-            int temp = matches % 3;
-            printf("\n%d\n", temp);
-            printf("\nThe computer takes %d matches\n", (matches % 3));
-            matches = matches - (matches % 3);
+            int computerMatches = matches % 4;
+
+            if (computerMatches < 1)
+            {
+                computerMatches = 1;
+            }
+
+            printf("\nThe computer takes %d matches\n", computerMatches);
+
+            matches = matches - computerMatches;
+
             showMatches(matches);
         }
         else
