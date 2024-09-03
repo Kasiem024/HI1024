@@ -1,18 +1,26 @@
 #include <stdio.h>
 
+int showMatches(int matches)
+{
+
+    for (int counter = 0; counter < matches; counter++)
+    {
+        printf("| ");
+    }
+
+    return 0;
+}
+
 int main()
 {
     int matches = 15;
 
     printf("Welcome to the matches game\n");
 
+    showMatches(matches);
+
     while (matches > 0)
     {
-        for (int counter = 0; counter < matches; counter++)
-        {
-            printf("| ");
-        }
-
         printf("\nHow many matches do you want to take? (1-3): ");
 
         int correctChoice = 0, playerMatches = 0;
@@ -33,19 +41,24 @@ int main()
 
         matches = matches - playerMatches;
 
-        if (matches == 0)
+        showMatches(matches);
+
+        if (matches < 1)
         {
             printf("\nThe player won");
         }
-        else if (matches > 3)
+        else if (matches >= 4)
         {
-            printf("\nThe computer takes 3 matches\n");
-            matches = matches - 3;
+            int temp = matches % 3;
+            printf("\n%d\n", temp);
+            printf("\nThe computer takes %d matches\n", (matches % 3));
+            matches = matches - (matches % 3);
+            showMatches(matches);
         }
-        else if (matches < 3)
+        else
         {
             printf("\nThe computer takes %d matches\nThe computer won", matches);
-            matches = matches - 3;
+            matches = matches - matches;
         }
     }
 
