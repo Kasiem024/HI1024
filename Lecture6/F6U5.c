@@ -2,23 +2,12 @@
 
 int main()
 {
-    int digitSeenArray[10] = {
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    },
-        continueLoop = 1;
+    int continueLoop = 1;
     long userDigit = 1;
 
     while (continueLoop == 1)
     {
+        int digitSeenArray[10] = {0};
         printf("\n\nEnter a number: ");
         scanf("%d", &userDigit);
 
