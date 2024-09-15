@@ -1,14 +1,14 @@
 #include <stdio.h>
 
 int viewStats();
-void enterStats(int *statsArray);
+int enterStats(int *statsArray, int amountOfMeasurements);
 int computeStats();
 int resetStats();
 
 int main()
 {
     char userChoice = 'e';
-    int statsArray[10];
+    int statsArray[10], amountOfMeasurements = 0;
 
     while (userChoice != 'q')
     {
@@ -22,7 +22,7 @@ int main()
 
             break;
         case 'e':
-            enterStats(statsArray);
+            amountOfMeasurements = enterStats(statsArray, amountOfMeasurements);
             break;
         case 'c':
             printf(" %c ", userChoice);
@@ -45,39 +45,46 @@ int main()
     return 0;
 }
 
-void enterStats(int *statsArray)
+int enterStats(int *statsArray, int amountOfMeasurements)
 {
-    int amountOfMeasurements = 0, newMeasurement = 0;
+    char newMeasurement = 0;
 
     while (amountOfMeasurements < 10)
     {
         printf("\nEnter measurement #%d (or 'q' to quit): ", (amountOfMeasurements + 1));
-        scanf("%d", &newMeasurement);
-        printf("\nd= %d", newMeasurement);
-        printf("\nc= %c", newMeasurement);
+        scanf(" %c", &newMeasurement);
+        printf("\nmeasurement d= %d", newMeasurement);
+        printf("\nmeasurement c= %c", newMeasurement);
 
-        char temp = newMeasurement + '0';
-        printf("\nd= %d", temp);
-        printf("\nc= %c", temp);
+        int temp = newMeasurement - '0';
+        printf("\ntemp d= %d", temp);
+        printf("\ntemp c= %c", temp);
 
-        if (temp == 'q')
+        if (newMeasurement == 'q')
         {
             printf("%d", newMeasurement);
-            printf("Exiting");
+            printf("\nExiting e");
 
             break;
         }
         else
         {
-            printf("Inputting");
+            printf("\nInputting %d", temp);
 
-            statsArray[amountOfMeasurements] = newMeasurement;
+            statsArray[amountOfMeasurements] = temp;
             amountOfMeasurements++;
         }
+    }
+
+    if (amountOfMeasurements == 10)
+    {
+        printf("\nYou already have 10 measurements!");
     }
 
     for (int counter = 0; counter < amountOfMeasurements; counter++)
     {
         printf("%d ", statsArray[counter]);
     }
+
+    return amountOfMeasurements;
 }
