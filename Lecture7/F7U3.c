@@ -2,22 +2,27 @@
 #include <time.h>
 #include <stdlib.h>
 
-int fillArray(int array[5])
-
+int fillArray(int array[], int arraySize)
 {
+    array[arraySize];
+
     srand(time(NULL));
-    for (int counter = 0; counter < 5; counter++)
+
+    for (int counter = 0; counter < arraySize; counter++)
     {
         array[counter] = rand() % (10 + 10 + 1) - 10;
     }
+
     printf("\n");
 
     return 0;
 }
 
-int printArray(int array[5])
+int printArray(int array[], int arraySize)
 {
-    for (int counter = 0; counter < 5; counter++)
+    array[arraySize];
+
+    for (int counter = 0; counter < arraySize; counter++)
     {
         printf("%d ", array[counter]);
     }
@@ -26,11 +31,13 @@ int printArray(int array[5])
     return 0;
 }
 
-int sortArray(int array[5])
+int sortArray(int array[], int arraySize)
 {
-    for (int counter = 0; counter < 5; counter++)
+    array[arraySize];
+
+    for (int counter = 0; counter < arraySize - 1; counter++)
     {
-        for (int counter = 0; counter < 5; counter++)
+        for (int counter = 0; counter < arraySize - 1; counter++)
         {
             if (array[counter] > array[counter + 1])
             {
@@ -46,12 +53,13 @@ int sortArray(int array[5])
 
 int main()
 {
-    int array[5] = {0, 0, 0, 0, 0};
+    int arraySize = 5;
+    int array[arraySize];
 
-    fillArray(array);
-    printArray(array);
-    sortArray(array);
-    printArray(array);
+    fillArray(array, arraySize);
+    printArray(array, arraySize);
+    sortArray(array, arraySize);
+    printArray(array, arraySize);
 
     return 0;
 }
