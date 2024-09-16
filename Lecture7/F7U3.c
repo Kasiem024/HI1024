@@ -35,9 +35,9 @@ int sortArray(int array[], int arraySize)
 {
     array[arraySize];
 
-    for (int counter = 0; counter < arraySize - 1; counter++)
+    for (int i = 0; i < arraySize - 1; i++)
     {
-        for (int counter = 0; counter < arraySize - 1; counter++)
+        for (int counter = 0; counter < arraySize - 1 - i; counter++)
         {
             if (array[counter] > array[counter + 1])
             {

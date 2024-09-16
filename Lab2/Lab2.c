@@ -105,7 +105,7 @@ int enterMeasurements(int *measurementsArray, int amountOfMeasurements)
 
     if (amountOfMeasurements == 10)
     {
-        printf("\nYou already have 10 measurements!");
+        printf("You already have 10 measurements!\n");
     }
 
     return amountOfMeasurements;
@@ -144,7 +144,7 @@ int findMaxMeasurement(int *copyArray, int amountOfMeasurements)
 {
     for (int i = 0; i < amountOfMeasurements - 1; i++)
     {
-        for (int counter = 0; counter < amountOfMeasurements - 1; counter++)
+        for (int counter = 0; counter < amountOfMeasurements - 1 - i; counter++)
         {
             if (copyArray[counter] < copyArray[counter + 1])
             {
@@ -162,7 +162,7 @@ int findMinMeasurement(int *copyArray, int amountOfMeasurements)
 {
     for (int i = 0; i < amountOfMeasurements - 1; i++)
     {
-        for (int counter = 0; counter < amountOfMeasurements - 1; counter++)
+        for (int counter = 0; counter < amountOfMeasurements - 1 - i; counter++)
         {
             if (copyArray[counter] > copyArray[counter + 1])
             {
