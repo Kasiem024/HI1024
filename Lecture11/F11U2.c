@@ -3,16 +3,15 @@
 
 void addGlossary(char sweGlossaryArray[][20], char engGlossaryArray[][20], int *amountOfGlossary);
 void viewGlossary(char sweGlossaryArray[][20], char engGlossaryArray[][20], int amountOfGlossary);
-void deleteGlossary(char sweGlossaryArray[][20], char engGlossaryArray[][20], int *amountOfGlossary);
 
-int main()
+void main()
 {
     int userChoice = 1, amountOfGlossary = 0;
     char sweGlossaryArray[20][20] = {0}, engGlossaryArray[20][20] = {0};
 
     while (userChoice != 4)
     {
-        printf("(1) Skriva in (2) Skriva ut (3) Radera (4) Avsluta: ");
+        printf("(1) Write Glossary (2) View Glossary (3) Delete Glossary (4) Exit: ");
         scanf("%d", &userChoice);
 
         switch (userChoice)
@@ -24,18 +23,16 @@ int main()
             viewGlossary(sweGlossaryArray, engGlossaryArray, amountOfGlossary);
             break;
         case 3:
-            deleteGlossary(sweGlossaryArray, engGlossaryArray, &amountOfGlossary);
+            amountOfGlossary = 0;
             break;
         case 4:
-            printf("Avslutar\n");
+            printf("Exiting\n");
             break;
         default:
-            printf("Felaktig inmatning, försök igen\n");
+            printf("Wrong input, try again\n");
             break;
         }
     }
-
-    return 0;
 }
 
 void addGlossary(char sweGlossaryArray[][20], char engGlossaryArray[][20], int *amountOfGlossary)
@@ -44,7 +41,7 @@ void addGlossary(char sweGlossaryArray[][20], char engGlossaryArray[][20], int *
 
     while (*amountOfGlossary < 20)
     {
-        printf("\nSvenska: ");
+        printf("\nSwedish: ");
         scanf(" %s", sweWord);
 
         if (strcmp(sweWord, "q") == 0)
@@ -52,7 +49,7 @@ void addGlossary(char sweGlossaryArray[][20], char engGlossaryArray[][20], int *
             break;
         }
 
-        printf("\nEngelska: ");
+        printf("\nEnglish: ");
         scanf(" %s", engWord);
 
         strcpy(sweGlossaryArray[*amountOfGlossary], sweWord);
@@ -62,7 +59,7 @@ void addGlossary(char sweGlossaryArray[][20], char engGlossaryArray[][20], int *
 
     if (*amountOfGlossary == 20)
     {
-        printf("Du har redan 20 glosor\n");
+        printf("You already have 20 glossary\n");
     }
 }
 
@@ -70,7 +67,7 @@ void viewGlossary(char sweGlossaryArray[][20], char engGlossaryArray[][20], int 
 {
     if (amountOfGlossary == 0)
     {
-        printf("Gloslistan är tom\n");
+        printf("No glossaries\n");
     }
     else
     {
@@ -79,10 +76,4 @@ void viewGlossary(char sweGlossaryArray[][20], char engGlossaryArray[][20], int 
             printf("%s - %s\n", sweGlossaryArray[i], engGlossaryArray[i]);
         }
     }
-}
-
-void deleteGlossary(char sweGlossaryArray[][20], char engGlossaryArray[][20], int *amountOfGlossary)
-{
-    printf("Raderar alla glosor\n");
-    *amountOfGlossary = 0;
 }
