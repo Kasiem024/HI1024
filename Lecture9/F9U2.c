@@ -2,11 +2,12 @@
 #include <time.h>
 #include <stdlib.h>
 
-int shuffleArray(int integerArray[], int maxInteger);
+void shuffleArray(int integerArray[], int maxInteger);
 
-int main()
+void main()
 {
     int maxInteger = 0;
+
     printf("What is the highest integer you want to include? (1-1000): ");
     scanf("%d", &maxInteger);
 
@@ -19,12 +20,10 @@ int main()
 
     int integerArray[maxInteger];
 
-    for (int counter = 1; counter <= maxInteger; counter++)
+    for (int counter = 0; counter < maxInteger; counter++)
     {
-        integerArray[counter - 1] = counter;
+        integerArray[counter] = counter + 1;
     }
-
-    srand(time(NULL));
 
     shuffleArray(integerArray, maxInteger);
 
@@ -32,23 +31,18 @@ int main()
     {
         printf("%d ", integerArray[counter]);
     }
-
-    return 0;
 }
 
-int shuffleArray(int integerArray[], int maxInteger)
+void shuffleArray(int integerArray[], int maxInteger)
 {
+    srand(time(NULL));
+
     for (int counter = 0; counter < maxInteger; counter++)
     {
-        int randInteger = rand() % (maxInteger - 1 + 1);
+        int randInteger = (rand() % maxInteger + 1) - 1;
 
-        if (integerArray[randInteger] != integerArray[counter])
-        {
-            int tempInteger = integerArray[randInteger];
-            integerArray[randInteger] = integerArray[counter];
-            integerArray[counter] = tempInteger;
-        }
+        int tempInteger = integerArray[randInteger];
+        integerArray[randInteger] = integerArray[counter];
+        integerArray[counter] = tempInteger;
     }
-
-    return 0;
 }

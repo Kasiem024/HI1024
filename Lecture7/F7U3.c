@@ -54,7 +54,7 @@ int sortArray(int array[], int arraySize)
 int main()
 {
     int arraySize = 5;
-    int array[arraySize];
+    int array[5];
 
     fillArray(array, arraySize);
     printArray(array, arraySize);

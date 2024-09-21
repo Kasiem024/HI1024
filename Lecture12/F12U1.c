@@ -37,7 +37,7 @@ void main()
     printAccount(account1);
     printAccount(account2);
 
-    transfer(&account1, &account2);
+    transfer(account1, account2);
 
     printAccount(account1);
     printAccount(account2);
