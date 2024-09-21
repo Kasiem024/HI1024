@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <math.h>
+
+struct ComplexNumber
+{
+    float real;
+    float imaginary;
+};
+
+struct ComplexNumber funcCreateComplex(float real, float imaginary);
+void funcPrintComplex(struct ComplexNumber number);
+void funcMultiplyComplex(struct ComplexNumber *complexNumber, float decimalNumber);
+int funcEquals(struct ComplexNumber complexNumber1, struct ComplexNumber complexNumber2);
+
+int main()
+{
+    struct ComplexNumber c1 = funcCreateComplex(3, +2);
+    struct ComplexNumber c2 = funcCreateComplex(2, -3);
+
+    funcMultiplyComplex(&c1, -2.5);
+    funcMultiplyComplex(&c2, -1);
+
+    funcPrintComplex(c1);
+    funcPrintComplex(c2);
+
+    printf("\n%d", funcEquals(c1, c2));
+
+    return 0;
+}
+
+struct ComplexNumber funcCreateComplex(float real, float imaginary)
+{
+    struct ComplexNumber newComplexNumber;
+
+    newComplexNumber.real = real;
+    newComplexNumber.imaginary = imaginary;
+
+    return newComplexNumber;
+}
+
+void funcPrintComplex(struct ComplexNumber number)
+{
+    char temp = '+';
+
+    if (number.imaginary < 0)
+    {
+        temp = '-';
+        number.imaginary = sqrt(number.imaginary * number.imaginary);
+    }
+
+    printf("\n%0.4f %c %0.4fi", number.real, temp, number.imaginary);
+}
+
+void funcMultiplyComplex(struct ComplexNumber *complexNumber, float decimalNumber)
+{
+    complexNumber->real = complexNumber->real * decimalNumber;
+    complexNumber->imaginary = complexNumber->imaginary * decimalNumber;
+}
+
+int funcEquals(struct ComplexNumber complexNumber1, struct ComplexNumber complexNumber2)
+{
+    if (complexNumber1.real == complexNumber2.real && complexNumber1.imaginary == complexNumber2.imaginary)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
