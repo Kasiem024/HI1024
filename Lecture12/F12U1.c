@@ -28,17 +28,18 @@ void transfer(struct BankAcc *account1, struct BankAcc *account2)
     account1->balance = 0;
 }
 
-void main()
+int main()
 {
-
     struct BankAcc account1 = createAccount("Simran Singh", 3210);
     struct BankAcc account2 = createAccount("Mark Asplund", 210);
 
     printAccount(account1);
     printAccount(account2);
 
-    transfer(account1, account2);
+    transfer(&account1, &account2);
 
     printAccount(account1);
     printAccount(account2);
+
+    return 0;
 }
