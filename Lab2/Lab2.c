@@ -2,18 +2,18 @@
 #include <string.h>
 #include <math.h>
 
-void viewMeasurements(int *measurementsArray, int amountOfMeasurements);
-int enterMeasurements(int *measurementsArray, int amountOfMeasurements);
-void computeMeasurements(int *measurementsArray, int amountOfMeasurements);
-int findMaxMeasurement(int *copyArray, int amountOfMeasurements);
-int findMinMeasurement(int *copyArray, int amountOfMeasurements);
-float findAvrMeasurement(int *copyArray, int amountOfMeasurements);
-void findNormalizedMeasurement(int *copyArray, int amountOfMeasurements);
+void viewMeasurements(int *pMeasurementsArray, int pAmountMeasurements);
+int enterMeasurements(int *pMeasurementsArray, int pAmountMeasurements);
+void computeMeasurements(int *pMeasurementsArray, int pAmountMeasurements);
+int findMaxMeasurement(int *pCopyArray, int pAmountMeasurements);
+int findMinMeasurement(int *pCopyArray, int pAmountMeasurements);
+float findAvrMeasurement(int *pCopyArray, int pAmountMeasurements);
+void findNormalizedMeasurement(int *pCopyArray, int pAmountMeasurements);
 
 int main()
 {
     char userChoice = 'e';
-    int measurementsArray[10], amountOfMeasurements = 0;
+    int measurementsArray[10], amountMeasurements = 0;
     printf("Measurement tool 2.0\n");
 
     while (userChoice != 'q')
@@ -24,24 +24,24 @@ int main()
         switch (userChoice)
         {
         case 'v':
-            viewMeasurements(measurementsArray, amountOfMeasurements);
+            viewMeasurements(measurementsArray, amountMeasurements);
             break;
 
         case 'e':
-            amountOfMeasurements = enterMeasurements(measurementsArray, amountOfMeasurements);
+            amountMeasurements = enterMeasurements(measurementsArray, amountMeasurements);
             break;
 
         case 'c':
-            computeMeasurements(measurementsArray, amountOfMeasurements);
+            computeMeasurements(measurementsArray, amountMeasurements);
 
             break;
 
         case 'r':
-            for (int counter = 0; counter < amountOfMeasurements; counter++)
+            for (int counter = 0; counter < amountMeasurements; counter++)
             {
                 measurementsArray[counter] = 0;
             }
-            amountOfMeasurements = 0;
+            amountMeasurements = 0;
 
             break;
 
@@ -58,31 +58,31 @@ int main()
     return 0;
 }
 
-void viewMeasurements(int *measurementsArray, int amountOfMeasurements)
+void viewMeasurements(int *pMeasurementsArray, int pAmountMeasurements)
 {
-    if (amountOfMeasurements == 0)
+    if (pAmountMeasurements == 0)
     {
         printf("No measurements\n");
     }
     else
     {
         printf("[ ");
-        for (int counter = 0; counter < amountOfMeasurements; counter++)
+        for (int counter = 0; counter < pAmountMeasurements; counter++)
         {
-            printf("%d ", measurementsArray[counter]);
+            printf("%d ", pMeasurementsArray[counter]);
         }
         printf("]\n");
     }
 }
 
-int enterMeasurements(int *measurementsArray, int amountOfMeasurements)
+int enterMeasurements(int *pMeasurementsArray, int pAmountMeasurements)
 {
     int newMeasurement = 0;
     char input[10];
 
-    while (amountOfMeasurements < 10)
+    while (pAmountMeasurements < 10)
     {
-        printf("Enter measurement #%d (or q to quit): ", (amountOfMeasurements + 1));
+        printf("Enter measurement #%d (or q to quit): ", (pAmountMeasurements + 1));
         scanf("%s", &input);
 
         if (strcmp(input, "q") == 0)
@@ -94,26 +94,26 @@ int enterMeasurements(int *measurementsArray, int amountOfMeasurements)
 
         if (successBool)
         {
-            measurementsArray[amountOfMeasurements] = newMeasurement;
-            amountOfMeasurements++;
+            pMeasurementsArray[pAmountMeasurements] = newMeasurement;
+            pAmountMeasurements++;
         }
         else
         {
-            printf("\nInvalid input. Please enter a number or 'q' to quit.");
+            printf("\nInvalid input. Please enter a number or 'q' to quit.\n");
         }
     }
 
-    if (amountOfMeasurements == 10)
+    if (pAmountMeasurements == 10)
     {
         printf("You already have 10 measurements!\n");
     }
 
-    return amountOfMeasurements;
+    return pAmountMeasurements;
 }
 
-void computeMeasurements(int *measurementsArray, int amountOfMeasurements)
+void computeMeasurements(int *pMeasurementsArray, int pAmountMeasurements)
 {
-    if (amountOfMeasurements == 0)
+    if (pAmountMeasurements == 0)
     {
         printf("No measurements\n");
     }
@@ -121,81 +121,81 @@ void computeMeasurements(int *measurementsArray, int amountOfMeasurements)
     {
         int copyArray[10];
 
-        for (int counter = 0; counter < amountOfMeasurements; counter++)
+        for (int counter = 0; counter < pAmountMeasurements; counter++)
         {
-            copyArray[counter] = measurementsArray[counter];
+            copyArray[counter] = pMeasurementsArray[counter];
         }
 
-        printf("Max mesaurement: %d\n", findMaxMeasurement(copyArray, amountOfMeasurements));
-        printf("Min mesaurement: %d\n", findMinMeasurement(copyArray, amountOfMeasurements));
-        printf("Avr mesaurement: %0.2f\n", findAvrMeasurement(copyArray, amountOfMeasurements));
+        printf("Max mesaurement: %d\n", findMaxMeasurement(copyArray, pAmountMeasurements));
+        printf("Min mesaurement: %d\n", findMinMeasurement(copyArray, pAmountMeasurements));
+        printf("Avr mesaurement: %0.2f\n", findAvrMeasurement(copyArray, pAmountMeasurements));
 
-        for (int counter = 0; counter < amountOfMeasurements; counter++)
+        for (int counter = 0; counter < pAmountMeasurements; counter++)
         {
-            copyArray[counter] = measurementsArray[counter];
+            copyArray[counter] = pMeasurementsArray[counter];
         }
 
-        findNormalizedMeasurement(copyArray, amountOfMeasurements);
-        viewMeasurements(copyArray, amountOfMeasurements);
+        findNormalizedMeasurement(copyArray, pAmountMeasurements);
+        viewMeasurements(copyArray, pAmountMeasurements);
     }
 }
 
-int findMaxMeasurement(int *copyArray, int amountOfMeasurements)
+int findMaxMeasurement(int *pCopyArray, int pAmountMeasurements)
 {
-    for (int i = 0; i < amountOfMeasurements - 1; i++)
+    for (int i = 0; i < pAmountMeasurements - 1; i++)
     {
-        for (int counter = 0; counter < amountOfMeasurements - 1 - i; counter++)
+        for (int counter = 0; counter < pAmountMeasurements - 1 - i; counter++)
         {
-            if (copyArray[counter] < copyArray[counter + 1])
+            if (pCopyArray[counter] < pCopyArray[counter + 1])
             {
-                int temp = copyArray[counter];
-                copyArray[counter] = copyArray[counter + 1];
-                copyArray[counter + 1] = temp;
+                int temp = pCopyArray[counter];
+                pCopyArray[counter] = pCopyArray[counter + 1];
+                pCopyArray[counter + 1] = temp;
             }
         }
     }
 
-    return copyArray[0];
+    return pCopyArray[0];
 }
 
-int findMinMeasurement(int *copyArray, int amountOfMeasurements)
+int findMinMeasurement(int *pCopyArray, int pAmountMeasurements)
 {
-    for (int i = 0; i < amountOfMeasurements - 1; i++)
+    for (int i = 0; i < pAmountMeasurements - 1; i++)
     {
-        for (int counter = 0; counter < amountOfMeasurements - 1 - i; counter++)
+        for (int counter = 0; counter < pAmountMeasurements - 1 - i; counter++)
         {
-            if (copyArray[counter] > copyArray[counter + 1])
+            if (pCopyArray[counter] > pCopyArray[counter + 1])
             {
-                int temp = copyArray[counter];
-                copyArray[counter] = copyArray[counter + 1];
-                copyArray[counter + 1] = temp;
+                int temp = pCopyArray[counter];
+                pCopyArray[counter] = pCopyArray[counter + 1];
+                pCopyArray[counter + 1] = temp;
             }
         }
     }
 
-    return copyArray[0];
+    return pCopyArray[0];
 }
 
-float findAvrMeasurement(int *copyArray, int amountOfMeasurements)
+float findAvrMeasurement(int *pCopyArray, int pAmountMeasurements)
 {
     float avrMesaurement = 0;
 
-    for (int counter = 0; counter < amountOfMeasurements; counter++)
+    for (int counter = 0; counter < pAmountMeasurements; counter++)
     {
-        avrMesaurement = avrMesaurement + copyArray[counter];
+        avrMesaurement = avrMesaurement + pCopyArray[counter];
     }
 
-    avrMesaurement = avrMesaurement / amountOfMeasurements;
+    avrMesaurement = avrMesaurement / pAmountMeasurements;
 
     return avrMesaurement;
 }
 
-void findNormalizedMeasurement(int *copyArray, int amountOfMeasurements)
+void findNormalizedMeasurement(int *pCopyArray, int pAmountMeasurements)
 {
-    int avrMesaurement = round(findAvrMeasurement(copyArray, amountOfMeasurements));
+    int avrMesaurement = round(findAvrMeasurement(pCopyArray, pAmountMeasurements));
 
-    for (int counter = 0; counter < amountOfMeasurements; counter++)
+    for (int counter = 0; counter < pAmountMeasurements; counter++)
     {
-        copyArray[counter] = copyArray[counter] - avrMesaurement;
+        pCopyArray[counter] = pCopyArray[counter] - avrMesaurement;
     }
 }
