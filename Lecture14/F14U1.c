@@ -4,13 +4,14 @@
 
 int main()
 {
-    int amountCards = 0;
-    // while (amountCards % 2 != 0)
-    // {
-    //     printf("\nChoose amount of cards (2-16): ");
-    //     scanf("%d", &amountCards);
-    // }
-    amountCards = 10;
+    int amountCards = 1;
+
+    while (amountCards % 2 != 0 || amountCards < 2)
+    {
+        printf("\nChoose amount of cards (2-16): ");
+        scanf("%d", &amountCards);
+    }
+
     char pairsArray[amountCards];
 
     for (int counter = 0; counter < amountCards; counter++)
@@ -38,43 +39,52 @@ int main()
         pairsArray[randomNum2] = letterCounter;
     }
 
-    int amountTries = 0, continueLoop = 0, foundPairs[amountCards];
+    int amountTries = 0, foundPairs[amountCards], amountFoundPairs = 0;
 
     for (int counter = 0; counter < amountCards; counter++)
     {
         foundPairs[counter] = counter + 1;
     }
 
-    while (continueLoop == 0)
+    while (amountFoundPairs != amountCards)
     {
         int playerChoice1 = 0, playerChoice2 = 0, correctInput = 0;
 
-        printf("\nWhich card do you want to turn? ");
-
-        for (int counter = 0; counter < amountCards; counter++)
-        {
-            if (foundPairs[counter] != 0)
-            {
-                printf("%d ", foundPairs[counter]);
-            }
-        }
-
         while (correctInput == 0)
         {
+            for (int counter = 0; counter < amountCards; counter++)
+            {
+                if (foundPairs[counter] != 0)
+                {
+                    printf("%d ", foundPairs[counter]);
+                }
+            }
+
+            printf("\nWhich card do you want to turn? ");
+
             scanf("%d %d", &playerChoice1, &playerChoice2);
             if (playerChoice1 == playerChoice2)
+            {
+                printf("Wrong choice\n");
                 continue;
+            }
+            if (foundPairs[playerChoice1 - 1] == 0 || foundPairs[playerChoice2 - 1] == 0)
+            {
+                printf("Wrong choice\n");
+                continue;
+            }
+
             break;
         }
 
-        playerChoice1--;
-        playerChoice2--;
+        playerChoice1--, playerChoice2--;
 
         if (pairsArray[playerChoice1] == pairsArray[playerChoice2])
         {
-            printf("You got the pair %c", pairsArray[playerChoice1]);
+            printf("You got the pair %c\n", pairsArray[playerChoice1]);
             foundPairs[playerChoice1] = 0;
             foundPairs[playerChoice2] = 0;
+            amountFoundPairs += 2;
         }
         else
         {
@@ -84,12 +94,7 @@ int main()
         amountTries++;
     }
 
-    printf("\nYou played for %d rounds", amountTries);
+    printf("You played for %d rounds", amountTries);
 
     return 0;
 }
-
-// for (int counter = 0; counter < amountCards; counter++)
-// {
-//     printf("%c, ", pairsArray[counter]);
-// }
