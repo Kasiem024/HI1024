@@ -2,19 +2,17 @@
 #include <stdlib.h>
 #include <time.h>
 
-struct card
+typedef struct card
 {
     int number;
     char color;
-};
-typedef struct card Card;
+} Card;
 
-struct hand
+typedef struct hand
 {
     Card cards[52];
     int amount;
-};
-typedef struct hand Hand;
+} Hand;
 
 void printHand(Hand currentHand);
 void swap(Hand *firstHand, Hand *secondHand);
