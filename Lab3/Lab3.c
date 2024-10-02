@@ -1,87 +1,97 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 typedef struct patient
 {
-    int personalID;
-    char name[20];
-    int pictures[10];
+    char personalID[11];
+    char fullName[40];
+    int picRef[10];
+    int picAmount;
 } Patient;
 
 typedef struct allPatients
 {
-    Patient patient;
+    Patient patient[1000];
     int amount;
 } AllPatients;
 
+void funcPrintPatients(AllPatients pPatientsArray);
+
 int main()
 {
+    AllPatients patientsArray;
+    patientsArray.amount = 0;
+
+    // char chosenFile[40] = "patients.txt";
+    char chosenFile[40];
+    FILE *databaseFile = NULL;
+
     printf("Patient Journal System");
     printf("\nWhich file do you want to use: ");
-
-    char chosenFile[40] = "patients.txt";
-    FILE *fptr = NULL;
-    // while (1)
-    // {
-    //     scanf(" %s", &chosenFile);
-    //     printf("\nchosenFile: %s", chosenFile);
-    //     fptr = fopen(chosenFile, "r");
-    //     printf("\nfptr: %s", fptr);
-    //     if (fptr)
-    //     {
-    //         break;
-    //     }
-    // }
-
-    fptr = fopen(chosenFile, "r");
-
-    printf("%d", sizeof(fptr));
-
-    char fileContent[4][3];
-
-    // printf("\nsizeof: %d", sizeof(fptr));
-
-    int amountLines = 0;
     while (1)
     {
-        fgets(fileContent[amountLines], 1000, fptr);
+        scanf(" %s", &chosenFile);
+        printf("\nchosenFile: %s", chosenFile);
 
-        amountLines++;
-        if (feof(fptr))
+        databaseFile = fopen(chosenFile, "r");
+        printf("\ndatabaseFile: %s", databaseFile);
+
+        if (databaseFile)
         {
             break;
         }
     }
-    fclose(fptr);
 
-    int charWordCounter = 0;
-    AllPatients patientsArray[1000][1000];
+    databaseFile = fopen(chosenFile, "r");
 
-    patientsArray[0]->patient.name[0] = 'a';
+    char fileContent[1000][100];
 
-    for (int lineCounter = 0; lineCounter < amountLines; lineCounter++)
+    while (1)
     {
-        char word[1000];
-        printf("\n%s\n", fileContent[lineCounter]);
-        for (int charCounter = 0; charCounter < 1000; charCounter++)
-        {
-            char currentChar = fileContent[lineCounter][charCounter];
-            printf("%c", currentChar);
+        fgets(fileContent[patientsArray.amount], 1000, databaseFile);
 
-            if (currentChar == '{')
-            {
-                patientsArray[0]->patient.name[charWordCounter] = currentChar;
-            }
-            if (currentChar == '}')
-            {
-                charWordCounter = 0;
-            }
+        patientsArray.amount++;
+        if (feof(databaseFile))
+        {
+            break;
         }
     }
+    fclose(databaseFile);
 
-    printf("%s", patientsArray[0]->patient.name);
-    printf("%s", patientsArray[1]->patient.name);
-    printf("%s", patientsArray[2]->patient.name);
-    printf("%s", patientsArray[3]->patient.name);
+    for (int counter = 0; counter < patientsArray.amount; counter++)
+    {
+
+        char currentFullName[40];
+        char currentPersonalID[20];
+        char picStr[100];
+
+        sscanf(fileContent[counter], "{%49[^}]} {%19[^}]} {%99[^}]}", currentFullName, currentPersonalID, picStr);
+
+        strncpy(patientsArray.patient[counter].fullName, currentFullName, sizeof(patientsArray.patient[counter].fullName) - 1);
+        patientsArray.patient[counter].fullName[sizeof(patientsArray.patient[counter].fullName) - 1] = '\0';
+
+        strncpy(patientsArray.patient[counter].personalID, currentPersonalID, sizeof(patientsArray.patient[counter].personalID) - 1);
+        patientsArray.patient[counter].personalID[sizeof(patientsArray.patient[counter].personalID) - 1] = '\0';
+
+        int picRef[10];
+        int picCount = 0;
+
+        char *token = strtok(picStr, ",");
+        while (token != NULL)
+        {
+            picRef[picCount] = atoi(token);
+            picCount++;
+            token = strtok(NULL, ",");
+        }
+
+        for (int counterPic = 0; counterPic < picCount; counterPic++)
+        {
+            patientsArray.patient[counter].picRef[counterPic] = picRef[counterPic];
+        }
+
+        patientsArray.patient[counter].picAmount = picCount;
+    }
 
     int userChoice = 0;
 
@@ -91,21 +101,21 @@ int main()
                "\n\t1) Register new patients"
                "\n\t2) Print all patients"
                "\n\t3) Look for patient"
-               "\n\t4) Add pictures"
+               "\n\t4) Add picRef"
                "\n\t5) Sort patients"
                "\n\t6) Deregister patient"
                "\n\t7) Exit program"
                "\nEnter choice: ");
 
         scanf("%d", &userChoice);
-        printf("\nuserChoice: %d", userChoice);
+
         switch (userChoice)
         {
         case 1:
 
             break;
         case 2:
-
+            funcPrintPatients(patientsArray);
             break;
         case 3:
 
@@ -120,7 +130,7 @@ int main()
 
             break;
         case 7:
-
+            printf("Exiting");
             break;
 
         default:
@@ -129,4 +139,31 @@ int main()
     }
 
     return 0;
+}
+
+void funcPrintPatients(AllPatients pPatientsArray)
+{
+    printf("\nPersonal ID \t Name \t\t Picture references\n");
+    printf("\n------------------------------------------------------------------------\n");
+
+    for (int counterPatient = 0; counterPatient < pPatientsArray.amount; counterPatient++)
+    {
+        printf("%s \t", pPatientsArray.patient[counterPatient].personalID);
+        printf("%s \t", pPatientsArray.patient[counterPatient].fullName);
+
+        printf("[");
+        for (int counterPics = 0; counterPics < pPatientsArray.patient[counterPatient].picAmount; counterPics++)
+        {
+            if (pPatientsArray.patient[counterPatient].picRef[counterPics] != 0)
+            {
+                printf("%d", pPatientsArray.patient[counterPatient].picRef[counterPics]);
+
+                if ((pPatientsArray.patient[counterPatient].picAmount - counterPics) != 1)
+                {
+                    printf(", ");
+                }
+            }
+        }
+        printf("]\n");
+    }
 }
