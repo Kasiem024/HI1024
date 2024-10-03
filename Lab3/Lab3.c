@@ -16,82 +16,44 @@ typedef struct allPatients
     int amount;
 } AllPatients;
 
+void funcCreateArray(AllPatients *pPatientsArray, char *pChosenFile, FILE *pDatabaseFile);
 void funcPrintPatients(AllPatients pPatientsArray);
+void funcSaveFile(AllPatients *pPatientsArray, char *pChosenFile, FILE *pDatabaseFile);
 
 int main()
 {
     AllPatients patientsArray;
     patientsArray.amount = 0;
 
-    // char chosenFile[40] = "patients.txt";
-    char chosenFile[40];
+    char chosenFile[40] = "patients.txt";
+    // char chosenFile[40];
     FILE *databaseFile = NULL;
 
     printf("Patient Journal System");
     printf("\nWhich file do you want to use: ");
-    while (1)
-    {
-        scanf(" %s", &chosenFile);
-        printf("\nchosenFile: %s", chosenFile);
 
-        databaseFile = fopen(chosenFile, "r");
-        printf("\ndatabaseFile: %s", databaseFile);
-
-        if (databaseFile)
-        {
-            break;
-        }
-    }
+    // while (1)
+    // {
+    //     scanf(" %s", &chosenFile);
 
     databaseFile = fopen(chosenFile, "r");
 
-    char fileContent[1000][100];
-
-    while (1)
-    {
-        fgets(fileContent[patientsArray.amount], 1000, databaseFile);
-
-        patientsArray.amount++;
-        if (feof(databaseFile))
-        {
-            break;
-        }
-    }
-    fclose(databaseFile);
-
-    for (int counter = 0; counter < patientsArray.amount; counter++)
-    {
-
-        char currentFullName[40];
-        char currentPersonalID[20];
-        char picStr[100];
-
-        sscanf(fileContent[counter], "{%49[^}]} {%19[^}]} {%99[^}]}", currentFullName, currentPersonalID, picStr);
-
-        strncpy(patientsArray.patient[counter].fullName, currentFullName, sizeof(patientsArray.patient[counter].fullName) - 1);
-        patientsArray.patient[counter].fullName[sizeof(patientsArray.patient[counter].fullName) - 1] = '\0';
-
-        strncpy(patientsArray.patient[counter].personalID, currentPersonalID, sizeof(patientsArray.patient[counter].personalID) - 1);
-        patientsArray.patient[counter].personalID[sizeof(patientsArray.patient[counter].personalID) - 1] = '\0';
-
-        int picRef[10];
-        int picCount = 0;
-
-        char *token = strtok(picStr, ",");
-        while (token != NULL)
-        {
-            picRef[picCount] = atoi(token);
-            picCount++;
-            token = strtok(NULL, ",");
-        }
-
-        for (int counterPic = 0; counterPic < picCount; counterPic++)
-        {
-            patientsArray.patient[counter].picRef[counterPic] = picRef[counterPic];
-        }
-
-        patientsArray.patient[counter].picAmount = picCount;
-    }
+    //     if (databaseFile)
+    //     {
+    funcCreateArray(&patientsArray, chosenFile, databaseFile);
+    //         break;
+    //     }
+    //     else if (strstr(chosenFile, ".txt") == NULL)
+    //     {
+    //         printf("The file needs to be '.txt' format\n");
+    //         continue;
+    //     }
+    //     else
+    //     {
+    //         printf("File does not exist, creating a new file called: %s", chosenFile);
+    //         break;
+    //     }
+    // }
 
     int userChoice = 0;
 
@@ -101,7 +63,7 @@ int main()
                "\n\t1) Register new patients"
                "\n\t2) Print all patients"
                "\n\t3) Look for patient"
-               "\n\t4) Add picRef"
+               "\n\t4) Add picture references"
                "\n\t5) Sort patients"
                "\n\t6) Deregister patient"
                "\n\t7) Exit program"
@@ -115,7 +77,14 @@ int main()
 
             break;
         case 2:
+            if (patientsArray.amount == 0)
+            {
+                printf("Database is empty");
+                break;
+            }
+
             funcPrintPatients(patientsArray);
+
             break;
         case 3:
 
@@ -130,15 +99,72 @@ int main()
 
             break;
         case 7:
-            printf("Exiting");
-            break;
+            funcSaveFile(&patientsArray, chosenFile, databaseFile);
 
+            break;
         default:
             break;
         }
     }
 
     return 0;
+}
+
+void funcCreateArray(AllPatients *pPatientsArray, char *pChosenFile, FILE *pDatabaseFile)
+{
+    pDatabaseFile = fopen(pChosenFile, "r");
+
+    char fileContent[1000][100];
+
+    while (pPatientsArray->amount < 1000)
+    {
+        fgets(fileContent[pPatientsArray->amount], 1000, pDatabaseFile);
+
+        pPatientsArray->amount++;
+        if (feof(pDatabaseFile))
+        {
+            break;
+        }
+    }
+    fclose(pDatabaseFile);
+
+    if (pPatientsArray->amount == 1000)
+    {
+        printf("The data for the first 1000 patients have been found, if there are more than 1000 patients their data cannot be accessed");
+    }
+
+    for (int counter = 0; counter < pPatientsArray->amount; counter++)
+    {
+        char currentFullName[40];
+        char currentPersonalID[20];
+        char picStr[100];
+
+        sscanf(fileContent[counter], "{%49[^}]} {%19[^}]} {%99[^}]}", currentFullName, currentPersonalID, picStr);
+
+        strncpy(pPatientsArray->patient[counter].fullName, currentFullName, sizeof(pPatientsArray->patient[counter].fullName) - 1);
+        pPatientsArray->patient[counter].fullName[sizeof(pPatientsArray->patient[counter].fullName) - 1] = '\0';
+
+        strncpy(pPatientsArray->patient[counter].personalID, currentPersonalID, sizeof(pPatientsArray->patient[counter].personalID) - 1);
+        pPatientsArray->patient[counter].personalID[sizeof(pPatientsArray->patient[counter].personalID) - 1] = '\0';
+
+        int picRef[10];
+        int picCount = 0;
+
+        char *token = strtok(picStr, ",");
+        while (token != NULL)
+        {
+            picRef[picCount] = atoi(token);
+            picCount++;
+            token = strtok(NULL, ",");
+        }
+
+        for (int counterPic = 0; counterPic < picCount; counterPic++)
+        {
+            pPatientsArray->patient[counter].picRef[counterPic] = picRef[counterPic];
+        }
+
+        pPatientsArray->patient[counter].picAmount = picCount;
+    }
 }
 
 void funcPrintPatients(AllPatients pPatientsArray)
@@ -166,4 +192,52 @@ void funcPrintPatients(AllPatients pPatientsArray)
         }
         printf("]\n");
     }
+}
+
+void funcSaveFile(AllPatients *pPatientsArray, char *pChosenFile, FILE *pDatabaseFile)
+{
+    printf("Saving patient data in %s", pChosenFile);
+
+    char newFile[1000];
+
+    for (int counterPatient = 0; counterPatient < pPatientsArray->amount; counterPatient++)
+    {
+        char currentString[100];
+
+        char currentFullName[40] = "{";
+
+        strcat(currentFullName, pPatientsArray->patient[counterPatient].fullName);
+        strcat(currentFullName, "} ");
+
+        char currentPersonalID[40] = "{";
+
+        strcat(currentPersonalID, pPatientsArray->patient[counterPatient].personalID);
+        strcat(currentPersonalID, "} ");
+
+        char picStr[100];
+
+        for (int counterPics = 0; counterPics < pPatientsArray->patient[counterPatient].picAmount; counterPics++)
+        {
+            if (pPatientsArray->patient[counterPatient].picRef[counterPics] != 0)
+            {
+                char tempString[10];
+                itoa(pPatientsArray->patient[counterPatient].picRef[counterPics], tempString, 10);
+                strcat(picStr, tempString);
+            }
+        }
+
+        strcat(currentString, currentFullName);
+        strcat(currentString, currentPersonalID);
+        // strcat(currentString, picStr + '\n');
+
+        printf("\ncurrentString: %s\n", currentString);
+
+        strcat(newFile, currentString);
+    }
+
+    // pDatabaseFile = fopen(pChosenFile, "w");
+    // fprintf(pDatabaseFile, newFile);
+    // printf("%s", newFile);
+
+    printf("Exiting");
 }
