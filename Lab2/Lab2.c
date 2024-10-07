@@ -185,9 +185,7 @@ float findAvrMeasurement(int *pCopyArray, int pAmountMeasurements)
         avrMesaurement = avrMesaurement + pCopyArray[counter];
     }
 
-    avrMesaurement = avrMesaurement / pAmountMeasurements;
-
-    return avrMesaurement;
+    return avrMesaurement / pAmountMeasurements;
 }
 
 void findNormalizedMeasurement(int *pCopyArray, int pAmountMeasurements)

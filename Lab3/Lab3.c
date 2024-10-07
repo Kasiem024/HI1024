@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef struct patient
+typedef struct
 {
     char personalID[11];
     char fullName[40];
@@ -10,7 +10,7 @@ typedef struct patient
     int picAmount;
 } Patient;
 
-typedef struct allPatients
+typedef struct
 {
     Patient patient[1000];
     int amount;
@@ -199,6 +199,7 @@ void funcSaveFile(AllPatients *pPatientsArray, char *pChosenFile, FILE *pDatabas
     printf("Saving patient data in %s", pChosenFile);
 
     char newFile[1000];
+    pDatabaseFile = fopen(pChosenFile, "w");
 
     for (int counterPatient = 0; counterPatient < pPatientsArray->amount; counterPatient++)
     {
@@ -228,16 +229,19 @@ void funcSaveFile(AllPatients *pPatientsArray, char *pChosenFile, FILE *pDatabas
 
         strcat(currentString, currentFullName);
         strcat(currentString, currentPersonalID);
+
         // strcat(currentString, picStr + '\n');
+
+        fprintf(pDatabaseFile, "currentFullName");
+        fprintf(pDatabaseFile, "currentPersonalID", "\n");
 
         printf("\ncurrentString: %s\n", currentString);
 
         strcat(newFile, currentString);
     }
 
-    // pDatabaseFile = fopen(pChosenFile, "w");
-    // fprintf(pDatabaseFile, newFile);
     // printf("%s", newFile);
+    fclose(pDatabaseFile);
 
     printf("Exiting");
 }
