@@ -26,7 +26,7 @@ void funcReadFile(AllPatients *pPatientsArray, char chosenFile[], FILE *pDatabas
 void funcPrintData(Patient patient);
 void funcPrintHeader();
 void funcRegisterPatient(AllPatients *pPatientsArray);
-int funcFindPatient(AllPatients patientsArray);
+int funcFindPatient(AllPatients patientsArray, int foundUniquePatient);
 int funcSearchID(AllPatients *pPatientsArray, char searchID[]);
 int funcSearchPic(AllPatients *pPatientsArray, int searchPic);
 void funcAddPic(AllPatients *pPatientsArray);
@@ -114,7 +114,7 @@ int main()
                 break;
             }
 
-            funcFindPatient(patientsArray);
+            funcFindPatient(patientsArray, -2);
             break;
         case 4:
             if (!patientsArray.amount)
@@ -316,7 +316,7 @@ void funcPrintData(Patient patient)
     printf("]\n");
 }
 
-int funcFindPatient(AllPatients patientsArray)
+int funcFindPatient(AllPatients patientsArray, int foundUniquePatient)
 {
     int searchChoice = 0;
     while (searchChoice != 4)
@@ -347,6 +347,10 @@ int funcFindPatient(AllPatients patientsArray)
             {
                 funcPrintHeader();
                 funcPrintData(patientsArray.patient[foundPatient]);
+                if (foundUniquePatient == -1)
+                {
+                    return foundPatient;
+                }
             }
             else
             {
@@ -365,18 +369,27 @@ int funcFindPatient(AllPatients patientsArray)
             {
                 if (strstr(patientsArray.patient[counterPatient].fullName, searchName) != NULL)
                 {
-                    if (found)
+                    if (found == 1)
                     {
                         funcPrintHeader();
                     }
                     funcPrintData(patientsArray.patient[counterPatient]);
-                    found = 0;
+                    foundPatient = counterPatient;
+                    found++;
                 }
             }
 
-            if (found)
+            if (found == 1)
             {
                 printf("No patient with that name in the database");
+            }
+            else if (found > 2 && foundUniquePatient == -1)
+            {
+                printf("More than one patient with that name");
+            }
+            else if (found == 2 && foundUniquePatient == -1)
+            {
+                return foundPatient;
             }
 
             break;
@@ -392,6 +405,10 @@ int funcFindPatient(AllPatients patientsArray)
             {
                 funcPrintHeader();
                 funcPrintData(patientsArray.patient[foundPatient]);
+                if (foundUniquePatient == -1)
+                {
+                    return foundPatient;
+                }
             }
             else
             {
@@ -401,6 +418,10 @@ int funcFindPatient(AllPatients patientsArray)
             break;
         case 4:
             printf("\nExiting search");
+            if (foundUniquePatient == -1)
+            {
+                return -3;
+            }
             break;
         default:
             printf("\nWrong input, try again");
@@ -408,6 +429,8 @@ int funcFindPatient(AllPatients patientsArray)
             break;
         }
     }
+
+    return foundUniquePatient;
 }
 
 int funcSearchID(AllPatients *pPatientsArray, char searchID[])
@@ -439,6 +462,42 @@ int funcSearchPic(AllPatients *pPatientsArray, int searchPic)
 
 void funcAddPic(AllPatients *pPatientsArray)
 {
+    int foundUniquePatient = funcFindPatient(*pPatientsArray, -1), foundPatient = -1;
+
+    int newPic = -1, newPicCounter = pPatientsArray->patient[foundUniquePatient].picAmount, newPicArray[10] = {0};
+
+    while (newPicCounter < MAX_PICS && foundUniquePatient != -3)
+    {
+        printf("\nEnter picture references (or 0 to exit): ");
+
+        scanf("%d", &newPic);
+        if (newPic == 0)
+            break;
+
+        foundPatient = funcSearchPic(pPatientsArray, newPic);
+
+        if (foundPatient != -1)
+        {
+            printf("\nThe picture already exists.");
+            continue;
+        }
+        else
+        {
+            newPicArray[newPicCounter] = newPic;
+            newPicCounter++;
+        }
+
+        if (newPicCounter == MAX_PICS)
+        {
+            printf("\nMaximum number of picture references for this patient has ben reached.");
+        }
+    }
+
+    for (int counter = pPatientsArray->patient[foundUniquePatient].picAmount; counter < newPicCounter; counter++)
+    {
+        pPatientsArray->patient[foundUniquePatient].picRef[counter] = newPicArray[counter];
+    }
+    pPatientsArray->patient[foundUniquePatient].picAmount = newPicCounter;
 }
 
 void funcSaveFile(AllPatients patientsArray, char chosenFile[], FILE *pDatabaseFile)
