@@ -31,6 +31,7 @@ int funcSearchID(AllPatients *pPatientsArray, char searchID[]);
 int funcSearchPic(AllPatients *pPatientsArray, int searchPic);
 int funcAddPic(AllPatients *pPatientsArray, int *pNewPicArray, int newPicCounter, int flag);
 void funcSort(AllPatients *pPatientsArray);
+void funcRemovePatient(AllPatients *pPatientsArray);
 void funcSaveFile(AllPatients patientsArray, char chosenFile[], FILE *pDatabaseFile);
 
 int main()
@@ -38,35 +39,33 @@ int main()
     AllPatients patientsArray;
     patientsArray.amount = 0;
 
-    char chosenFile[MAX_FILE_NAME] = "patients.txt";
-    // char chosenFile[MAX_FILE_NAME];
+    char chosenFile[MAX_FILE_NAME];
     FILE *databaseFile = NULL;
 
-    printf("Patient Journal System");
-    printf("\nWhich file do you want to use: ");
+    printf("Patient Journal System\nWhich file do you want to use: ");
 
-    // while (1)
-    // {
-    //     scanf(" %s", &chosenFile);
+    while (1)
+    {
+        scanf(" %s", &chosenFile);
 
-    databaseFile = fopen(chosenFile, "r");
+        databaseFile = fopen(chosenFile, "r");
 
-    // if (databaseFile)
-    // {
-    funcReadFile(&patientsArray, chosenFile, databaseFile);
-    //         break;
-    //     }
-    //     else if (strstr(chosenFile, ".txt") == NULL)
-    //     {
-    //         printf("\nThe file needs to be '.txt' format\n");
-    //         continue;
-    //     }
-    //     else
-    //     {
-    //         printf("\nFile does not exist, creating a new file called: %s", chosenFile);
-    //         break;
-    //     }
-    // }
+        if (databaseFile)
+        {
+            funcReadFile(&patientsArray, chosenFile, databaseFile);
+            break;
+        }
+        else if (strstr(chosenFile, ".txt") == NULL)
+        {
+            printf("\nThe file needs to be '.txt' format\n");
+            continue;
+        }
+        else
+        {
+            printf("\nFile does not exist, creating a new file called: %s", chosenFile);
+            break;
+        }
+    }
 
     int userChoice = 0;
 
@@ -99,8 +98,8 @@ int main()
         {
         case 1:
             funcRegisterPatient(&patientsArray);
-
             break;
+
         case 2:
 
             funcPrintHeader();
@@ -120,12 +119,15 @@ int main()
             funcAddPic(&patientsArray, tempArray, 0, -2);
 
             break;
+
         case 5:
-
+            funcSort(&patientsArray);
             break;
+
         case 6:
-
+            funcRemovePatient(&patientsArray);
             break;
+
         case 7:
             funcSaveFile(patientsArray, chosenFile, databaseFile);
 
@@ -261,16 +263,18 @@ void funcRegisterPatient(AllPatients *pPatientsArray)
 
 void funcPrintHeader()
 {
-    printf("\nPersonal ID \t Name \t\t Picture references\n");
+    printf("\nPersonal ID \tName\t\t\t\t\tPicture references\n");
     printf("\n------------------------------------------------------------------------\n");
 }
 
 void funcPrintData(Patient patient)
 {
-    printf("%s \t", patient.personalID);
-    printf("%s \t", patient.fullName);
+    int space = MAX_NAME_LENGTH - strlen(patient.fullName);
 
-    printf("[");
+    printf("%s\t", patient.personalID);
+    printf("%s", patient.fullName);
+
+    printf("%*s", space, "[");
     for (int counterPics = 0; counterPics < patient.picAmount; counterPics++)
     {
         if (patient.picRef[counterPics] != 0)
@@ -432,14 +436,13 @@ int funcSearchPic(AllPatients *pPatientsArray, int searchPic)
 
 int funcAddPic(AllPatients *pPatientsArray, int *pNewPicArray, int newPicCounter, int flag)
 {
-    int foundUniquePatient = -1, foundPatient = -1;
+    int foundUniquePatient = -1, foundPatient = -1, newPic = -1;
+
     if (flag == -2) // If called from main function
     {
         foundUniquePatient = funcFindPatient(*pPatientsArray, -1);
         newPicCounter = pPatientsArray->patient[foundUniquePatient].picAmount;
     }
-
-    int newPic = -1;
 
     while (newPicCounter < MAX_PICS && foundUniquePatient != -3)
     {
@@ -486,12 +489,65 @@ void funcSort(AllPatients *pPatientsArray)
 {
     printf("\nSort by ID (1), name (2): ");
 
+    int sortChoice = 0;
+
+    scanf("%d", &sortChoice);
+
     for (int counter1 = 0; counter1 < pPatientsArray->amount; counter1++)
     {
-        for (int counter2 = 0; counter2 < pPatientsArray->amount; counter2++)
+        for (int counter2 = 1; counter2 < pPatientsArray->amount - counter1; counter2++)
         {
-            /* code */
+            if (sortChoice == 1)
+            {
+                int temp1 = atoi(strtok(pPatientsArray->patient[counter2 - 1].personalID, "-"));
+                int temp2 = atoi(strtok(pPatientsArray->patient[counter2].personalID, "-"));
+
+                if (temp1 > temp2)
+                {
+                    Patient temp = pPatientsArray->patient[counter2 - 1];
+                    pPatientsArray->patient[counter2 - 1] = pPatientsArray->patient[counter2];
+                    pPatientsArray->patient[counter2] = temp;
+                }
+            }
+            else
+            {
+                if (strcmp(pPatientsArray->patient[counter2 - 1].fullName, pPatientsArray->patient[counter2].fullName) > 0)
+                {
+                    Patient temp = pPatientsArray->patient[counter2 - 1];
+
+                    pPatientsArray->patient[counter2 - 1] = pPatientsArray->patient[counter2];
+                    pPatientsArray->patient[counter2] = temp;
+                }
+            }
         }
+    }
+}
+
+void funcRemovePatient(AllPatients *pPatientsArray)
+{
+    int foundUniquePatient = funcFindPatient(*pPatientsArray, -1);
+
+    char userChoice = 'a';
+
+    printf("\nDo you want to remove the patient (y/n)?");
+    scanf(" %c", &userChoice);
+
+    switch (userChoice)
+    {
+    case 'y':
+        for (int counter = foundUniquePatient; counter < pPatientsArray->amount; counter++)
+        {
+            pPatientsArray->patient[counter] = pPatientsArray->patient[counter + 1];
+        }
+        pPatientsArray->amount--;
+        break;
+    case 'n':
+        printf("\nNo:%c", userChoice);
+
+        break;
+    default:
+        printf("Wrong input, try again");
+        break;
     }
 }
 
