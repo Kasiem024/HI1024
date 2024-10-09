@@ -5,7 +5,7 @@
 #define MAX_PATIENTS 1000
 #define MAX_PICS 10
 #define MAX_FILE_NAME 40
-#define MAX_ID_LENGTH 12
+#define MAX_ID_LENGTH 14
 #define MAX_NAME_LENGTH 40
 
 typedef struct
@@ -110,11 +110,10 @@ int main()
 
             break;
         case 3:
-
             funcFindPatient(patientsArray, -2);
             break;
         case 4:
-
+            // This array does nothing
             int tempArray[10] = {0};
             funcAddPic(&patientsArray, tempArray, 0, -2);
 
@@ -137,7 +136,6 @@ int main()
             break;
         }
     }
-
     return 0;
 }
 
@@ -145,14 +143,15 @@ void funcReadFile(AllPatients *pPatientsArray, char chosenFile[], FILE *pDatabas
 {
     pDatabaseFile = fopen(chosenFile, "r");
 
-    char fileContent[MAX_PATIENTS][100];
+    char fileContent[MAX_PATIENTS][MAX_ID_LENGTH + MAX_NAME_LENGTH + MAX_PICS + 10];
 
     while (pPatientsArray->amount < MAX_PATIENTS)
     {
-        fgets(fileContent[pPatientsArray->amount], 1000, pDatabaseFile);
+        // Each line in the file becomes its own element in the array
+        fgets(fileContent[pPatientsArray->amount], sizeof(fileContent[pPatientsArray->amount]), pDatabaseFile);
 
         pPatientsArray->amount++;
-        if (feof(pDatabaseFile))
+        if (feof(pDatabaseFile)) // If end of file is reached
         {
             break;
         }
@@ -166,10 +165,11 @@ void funcReadFile(AllPatients *pPatientsArray, char chosenFile[], FILE *pDatabas
 
     for (int counter = 0; counter < pPatientsArray->amount; counter++)
     {
-        char currentFullName[MAX_NAME_LENGTH], currentPersonalID[MAX_ID_LENGTH], picStr[100];
+        char currentFullName[MAX_NAME_LENGTH], currentPersonalID[MAX_ID_LENGTH], picStr[MAX_PICS + 20];
         Patient currentPatient = pPatientsArray->patient[counter];
 
-        sscanf(fileContent[counter], "{%41[^}]} {%13[^}]} {%99[^}]}", currentFullName, currentPersonalID, picStr);
+        // Tokenize fileContent elements based on '{}'
+        sscanf(fileContent[counter], "{%41[^}]} {%15[^}]} {%30[^}]}", currentFullName, currentPersonalID, picStr);
 
         strncpy(currentPatient.fullName, currentFullName, sizeof(currentPatient.fullName) - 1);
         currentPatient.fullName[sizeof(currentPatient.fullName) - 1] = '\0';
@@ -177,13 +177,13 @@ void funcReadFile(AllPatients *pPatientsArray, char chosenFile[], FILE *pDatabas
         strncpy(currentPatient.personalID, currentPersonalID, sizeof(currentPatient.personalID) - 1);
         currentPatient.personalID[sizeof(currentPatient.personalID) - 1] = '\0';
 
-        int picRef[MAX_PICS];
-        int picCount = 0;
+        int picRef[MAX_PICS], picCount = 0;
 
+        // Tokenize based on ','
         char *token = strtok(picStr, ",");
         while (token != NULL && picCount < MAX_PICS)
         {
-            picRef[picCount] = atoi(token);
+            picRef[picCount] = atoi(token); // Convert string to int
             picCount++;
             token = strtok(NULL, ",");
 
@@ -192,7 +192,6 @@ void funcReadFile(AllPatients *pPatientsArray, char chosenFile[], FILE *pDatabas
                 printf("\nThe data for the first %d pictures of %s have been found, if there are more than %d pictures they cannot be accessed.", MAX_PICS, currentFullName, MAX_PICS);
             }
         }
-
         for (int counterPic = 0; counterPic < picCount; counterPic++)
         {
             currentPatient.picRef[counterPic] = picRef[counterPic];
@@ -202,6 +201,8 @@ void funcReadFile(AllPatients *pPatientsArray, char chosenFile[], FILE *pDatabas
 
         pPatientsArray->patient[counter] = currentPatient;
     }
+
+    printf("\nAmount of patients: %d", pPatientsArray->amount);
 }
 
 void funcRegisterPatient(AllPatients *pPatientsArray)
@@ -209,6 +210,7 @@ void funcRegisterPatient(AllPatients *pPatientsArray)
     while (pPatientsArray->amount < MAX_PATIENTS)
     {
         printf("\nEnter personal ID (or q to exit): ");
+
         char newID[MAX_ID_LENGTH];
         scanf(" %s", &newID);
 
@@ -234,9 +236,7 @@ void funcRegisterPatient(AllPatients *pPatientsArray)
         printf("\nEnter full name: ");
 
         char newName[MAX_NAME_LENGTH];
-
         fgets(newName, sizeof(newName), stdin);
-
         newName[strcspn(newName, "\n")] = 0; // Remove newline
 
         int newPicArray[10] = {0}, newPicCounter = 0;
@@ -253,11 +253,10 @@ void funcRegisterPatient(AllPatients *pPatientsArray)
         pPatientsArray->patient[pPatientsArray->amount].picAmount = newPicCounter;
 
         pPatientsArray->amount++;
-
-        if (pPatientsArray->amount == MAX_PATIENTS)
-        {
-            printf("\nMaximum number of patients in the database has ben reached.");
-        }
+    }
+    if (pPatientsArray->amount == MAX_PATIENTS)
+    {
+        printf("\nMaximum number of patients in the database has ben reached.");
     }
 }
 
@@ -269,6 +268,7 @@ void funcPrintHeader()
 
 void funcPrintData(Patient patient)
 {
+    // Used to reserve space for printout
     int space = MAX_NAME_LENGTH - strlen(patient.fullName);
 
     printf("%s\t", patient.personalID);
@@ -290,7 +290,7 @@ void funcPrintData(Patient patient)
     printf("]\n");
 }
 
-int funcFindPatient(AllPatients patientsArray, int foundUniquePatient)
+int funcFindPatient(AllPatients patientsArray, int flag)
 {
     int searchChoice = 0;
     while (searchChoice != 4)
@@ -321,7 +321,7 @@ int funcFindPatient(AllPatients patientsArray, int foundUniquePatient)
             {
                 funcPrintHeader();
                 funcPrintData(patientsArray.patient[foundPatient]);
-                if (foundUniquePatient == -1)
+                if (flag == -1) // If this function is not called from main
                 {
                     return foundPatient;
                 }
@@ -343,7 +343,7 @@ int funcFindPatient(AllPatients patientsArray, int foundUniquePatient)
             {
                 if (strstr(patientsArray.patient[counterPatient].fullName, searchName) != NULL)
                 {
-                    if (found == 1)
+                    if (found == 1) // If it's the first match
                     {
                         funcPrintHeader();
                     }
@@ -357,11 +357,11 @@ int funcFindPatient(AllPatients patientsArray, int foundUniquePatient)
             {
                 printf("No patient with that name in the database");
             }
-            else if (found > 2 && foundUniquePatient == -1)
+            else if (found > 2 && flag == -1) // If more than one patient was found and function is not called from main
             {
                 printf("More than one patient with that name");
             }
-            else if (found == 2 && foundUniquePatient == -1)
+            else if (found == 2 && flag == -1) // If only one patient was found and function is not called from main
             {
                 return foundPatient;
             }
@@ -379,7 +379,7 @@ int funcFindPatient(AllPatients patientsArray, int foundUniquePatient)
             {
                 funcPrintHeader();
                 funcPrintData(patientsArray.patient[foundPatient]);
-                if (foundUniquePatient == -1)
+                if (flag == -1)
                 {
                     return foundPatient;
                 }
@@ -392,7 +392,7 @@ int funcFindPatient(AllPatients patientsArray, int foundUniquePatient)
             break;
         case 4:
             printf("\nExiting search");
-            if (foundUniquePatient == -1)
+            if (flag == -1)
             {
                 return -3;
             }
@@ -403,8 +403,7 @@ int funcFindPatient(AllPatients patientsArray, int foundUniquePatient)
             break;
         }
     }
-
-    return foundUniquePatient;
+    return flag; // Only happens if called from main
 }
 
 int funcSearchID(AllPatients *pPatientsArray, char searchID[])
@@ -438,7 +437,7 @@ int funcAddPic(AllPatients *pPatientsArray, int *pNewPicArray, int newPicCounter
 {
     int foundUniquePatient = -1, foundPatient = -1, newPic = -1;
 
-    if (flag == -2) // If called from main function
+    if (flag == -2) // If called from main
     {
         foundUniquePatient = funcFindPatient(*pPatientsArray, -1);
         newPicCounter = pPatientsArray->patient[foundUniquePatient].picAmount;
@@ -459,16 +458,14 @@ int funcAddPic(AllPatients *pPatientsArray, int *pNewPicArray, int newPicCounter
             printf("\nThe picture already exists.");
             continue;
         }
-        else
-        {
-            pNewPicArray[newPicCounter] = newPic;
-            newPicCounter++;
-        }
 
-        if (newPicCounter == MAX_PICS)
-        {
-            printf("\nMaximum number of picture references for this patient has ben reached.");
-        }
+        pNewPicArray[newPicCounter] = newPic;
+        newPicCounter++;
+    }
+
+    if (newPicCounter == MAX_PICS)
+    {
+        printf("\nMaximum number of picture references for this patient has ben reached.");
     }
 
     if (flag == -2)
@@ -499,6 +496,7 @@ void funcSort(AllPatients *pPatientsArray)
         {
             if (sortChoice == 1)
             {
+                // Takes the first part of ID and converts it to an int
                 int temp1 = atoi(strtok(pPatientsArray->patient[counter2 - 1].personalID, "-"));
                 int temp2 = atoi(strtok(pPatientsArray->patient[counter2].personalID, "-"));
 
@@ -514,7 +512,6 @@ void funcSort(AllPatients *pPatientsArray)
                 if (strcmp(pPatientsArray->patient[counter2 - 1].fullName, pPatientsArray->patient[counter2].fullName) > 0)
                 {
                     Patient temp = pPatientsArray->patient[counter2 - 1];
-
                     pPatientsArray->patient[counter2 - 1] = pPatientsArray->patient[counter2];
                     pPatientsArray->patient[counter2] = temp;
                 }
@@ -540,10 +537,10 @@ void funcRemovePatient(AllPatients *pPatientsArray)
             pPatientsArray->patient[counter] = pPatientsArray->patient[counter + 1];
         }
         pPatientsArray->amount--;
+
+        printf("The patient has been removed");
         break;
     case 'n':
-        printf("\nNo:%c", userChoice);
-
         break;
     default:
         printf("Wrong input, try again");
@@ -569,7 +566,7 @@ void funcSaveFile(AllPatients patientsArray, char chosenFile[], FILE *pDatabaseF
         strcat(currentPersonalID, currentPatient.personalID);
         strcat(currentPersonalID, "} ");
 
-        char picStr[100] = "{";
+        char picStr[MAX_PICS + 40] = "{";
 
         for (int counterPics = 0; counterPics < currentPatient.picAmount; counterPics++)
         {
@@ -593,8 +590,6 @@ void funcSaveFile(AllPatients patientsArray, char chosenFile[], FILE *pDatabaseF
             fprintf(pDatabaseFile, "%s%s%s", currentFullName, currentPersonalID, picStr);
         }
     }
-
     fclose(pDatabaseFile);
-
     printf("\nExiting");
 }
